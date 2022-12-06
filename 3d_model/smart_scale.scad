@@ -7,8 +7,92 @@ leg_diameter = 10.5;
 sensor_height = 34;
 sensor_width = 44 - 1.5; // 1.5 is a mount bolt
 
-bottom_plate();
-translate([20, 52, 0]) rotate([0, 0, 90]) unit_mount();
+
+top();
+
+//bottom();
+
+/**
+ * Top plate
+ */
+module top() {
+    plate_size = 115;
+    mount_d = 3.1;
+    mount_s = 6.1;
+    mount_h = 3;
+   
+    difference() {
+        cube([plate_size, plate_size, 2]);
+
+        // side cut-outs
+        translate([-0.1, (plate_size - 30) / 2, -1]) cube([10, 30, 4]);
+        translate([plate_size - 10 + 0.1, (plate_size - 30) / 2, -1]) cube([10, 30, 4]);
+
+        translate([(plate_size - 70) / 2, -0.1, -1]) cube([70, 10, 4]);
+        translate([(plate_size - 70) / 2, plate_size - 10 + 0.1, -1]) cube([70, 10, 4]);
+        
+        // center cut-out
+        translate([plate_size / 2, plate_size / 2, -1]) cylinder(d = 40, h = 4);
+          
+        // holes
+        translate([0.5, 1, 0]) {
+            // mount h 75mm
+            mount_h_space = 76;
+            translate([7, (plate_size - mount_h_space) / 2 - 1, -0.5]) {
+                cylinder(d = mount_d, h = mount_h);
+                translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
+            }
+            translate([plate_size - 7, (plate_size - mount_h_space) / 2 - 1, -0.5]) { 
+                cylinder(d = mount_d, h = mount_h); 
+                translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
+            }
+            
+            // mount w 100mm
+            mount_w_space = 100;
+            translate([plate_size - 7, plate_size - 19.5, -0.5]) {
+                cylinder(d = mount_d, h = mount_h);
+                translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
+            }
+            translate([(plate_size - mount_w_space) / 2 - 1, plate_size - 19.5, -0.5]) {
+                cylinder(d = mount_d, h = mount_h);
+                translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
+            }
+        }
+    }
+    
+    // supports
+    difference() {
+        support_h = 4;
+        color([1,0,0]) translate([0, 0, 0]) {
+            support_size_w = 70;
+            translate([(plate_size - support_size_w) / 2, 22.5, 1.8]) cube([support_size_w, 2, support_h]);
+            translate([(plate_size - support_size_w) / 2, plate_size - 2 - 22.5, 1.8]) cube([support_size_w, 2, support_h]);
+            
+            support_size_h = 70;
+            translate([22, (plate_size - support_size_h) / 2, 1.8]) cube([2, support_size_h, support_h]);
+            translate([plate_size - 24, (plate_size - support_size_h) / 2, 1.8]) cube([2, support_size_h, support_h]);
+        }
+        
+        translate([16, 8, 7]) rotate([0, 45, 45]) cube(14);
+        translate([plate_size - 20, plate_size - 32, 7]) rotate([0, 45, 45]) cube(14);
+        translate([16, plate_size - 26, 0]) rotate([45, 0, 45]) cube(14);
+        translate([plate_size - 26, 16, 0]) rotate([45, 0, 45]) cube(14);
+    }
+}
+
+/**
+ * Bottom plate
+ */
+module bottom() {
+    difference() { 
+        translate([0, 0, 0]) {
+            bottom_plate();
+            translate([20, 52, 0]) rotate([0, 0, 90]) unit_mount();
+        }
+        // cut from bottom
+        translate([-5, -5, -4.4]) cube([130, 130, 5]);
+    }
+}
 
 module unit_mount() {
     mount_diameter = 4.8;
@@ -56,9 +140,9 @@ module plate_right() {
     difference() {
         cube([44, 35, plate_thickness]);
         translate([0, 0, 3.51]) sensor_right();
-        translate([16, 16, -1]) cylinder(d = leg_diameter, h = 2);
+        translate([16, 16, -1]) cylinder(d = leg_diameter, h = 2.25);
         
-        translate([5, 5, 2]) 
+        translate([5, 5, 2.5]) 
             minkowski() { 
                 cube([33, 24, 2]);
                 cylinder(d = 2, h = 0.1);
@@ -73,9 +157,9 @@ module plate_left() {
     difference() {
         cube([44, 35, plate_thickness]);
         translate([1.5, 0, 3.51]) sensor_left();
-        translate([30, 16, -1]) cylinder(d = leg_diameter, h = 2);
+        translate([30, 16, -1]) cylinder(d = leg_diameter, h = 2.25);
         
-        translate([6, 5, 2]) 
+        translate([6, 5, 2.5]) 
             minkowski() { 
                 cube([33, 24, 2]);
                 cylinder(d = 2, h = 0.1);
