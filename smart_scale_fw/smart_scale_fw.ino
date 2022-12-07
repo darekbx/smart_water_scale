@@ -3,14 +3,18 @@
 #include "HX711.h"
 
 #define DEBUG true
+#define SCALE_TIMES_AVERAGE 5
+#define THREAD_DELAY 5000
+#define COMPARE_DELTA 10.0f
 
 #define LOADCELL_DOUT_PIN 32
 #define LOADCELL_SCK_PIN  26
+#define PIN_LEDATOM 27
 
 HX711 scale;
 
+float prevWeight = 0.0f;
 bool deviceConnected = false;
-const byte PIN_LEDATOM = 27;
 
 void setup() {
   M5.begin(true, false, true);
@@ -25,24 +29,36 @@ void setup() {
 }
 
 void loop() {
-  float weight = scale.get_units(1) / 1000.0;
-  if (weight >= 0) {
-      Serial.printf("Weight: %.2fkg \r\n", weight);
-  } else {
-      Serial.println("Weight: 0.00kg");
-  }
+  if (deviceConnected) {
+    float weight = scale.get_units(SCALE_TIMES_AVERAGE) / 1000.0;
     
-  if (M5.Btn.wasPressed()) {
-    // Tare scale on button press
-    //scale.tare();
-    if (deviceConnected) {
+    if (weight > 0 && compare_floats(weight, prevWeight, COMPARE_DELTA) != 0) {
+      // Notify with Blue that weight was changed
+      M5.dis.drawpix(0, 0x00FF00);
+      Serial.printf("New weight: %.2fkg \r\n", weight);
       writeData(String(weight));
-      M5.dis.drawpix(0, 0xFF0000);
+      prevWeight = weight;
     }
-  } else if (M5.Btn.wasReleased()) {
-    M5.dis.drawpix(0, 0xFFFFFF);
-  }
 
-  delay(50);
+    delay(500);
+    
+    // Notify with Green that device is connected
+    M5.dis.drawpix(0, 0x00FF00);
+  } else {
+    // Notify with Red color when device is disconnected
+    M5.dis.drawpix(0, 0xFF0000);
+  }
+  
+  delay(THREAD_DELAY);
   M5.update();
+}
+
+int compare_floats(float a, float b, float delta) {
+  if (fabs(a - b) < delta) {
+    return 0;
+  } else if (a < b) {
+    return -1;  // a is less than b
+  } else {
+    return 1;  // a is greater than b
+  }
 }

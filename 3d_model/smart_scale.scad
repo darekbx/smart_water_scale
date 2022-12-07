@@ -22,38 +22,38 @@ module top() {
     mount_h = 3;
    
     difference() {
-        cube([plate_size, plate_size, 2]);
+        cube([plate_size, plate_size, 3]);
 
         // side cut-outs
-        translate([-0.1, (plate_size - 30) / 2, -1]) cube([10, 30, 4]);
-        translate([plate_size - 10 + 0.1, (plate_size - 30) / 2, -1]) cube([10, 30, 4]);
+        translate([-0.1, (plate_size - 30) / 2, -0.5]) cube([10, 30, 4]);
+        translate([plate_size - 10 + 0.1, (plate_size - 30) / 2, -0.5]) cube([10, 30, 4]);
 
-        translate([(plate_size - 70) / 2, -0.1, -1]) cube([70, 10, 4]);
-        translate([(plate_size - 70) / 2, plate_size - 10 + 0.1, -1]) cube([70, 10, 4]);
+        translate([(plate_size - 70) / 2, -0.1, -0.5]) cube([70, 10, 4]);
+        translate([(plate_size - 70) / 2, plate_size - 10 + 0.1, -0.5]) cube([70, 10, 4]);
         
         // center cut-out
-        translate([plate_size / 2, plate_size / 2, -1]) cylinder(d = 40, h = 4);
+        translate([plate_size / 2, plate_size / 2, -0.5]) cylinder(d = 30, h = 4);
           
         // holes
         translate([0.5, 1, 0]) {
             // mount h 75mm
             mount_h_space = 76;
-            translate([7, (plate_size - mount_h_space) / 2 - 1, -0.5]) {
+            translate([7, (plate_size - mount_h_space) / 2 - 1, 0.1]) {
                 cylinder(d = mount_d, h = mount_h);
                 translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
             }
-            translate([plate_size - 7, (plate_size - mount_h_space) / 2 - 1, -0.5]) { 
+            translate([plate_size - 7, (plate_size - mount_h_space) / 2 - 1, 0.1]) { 
                 cylinder(d = mount_d, h = mount_h); 
                 translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
             }
             
             // mount w 100mm
             mount_w_space = 100;
-            translate([plate_size - 7, plate_size - 19.5, -0.5]) {
+            translate([plate_size - 7, plate_size - 19.5, 0.1]) {
                 cylinder(d = mount_d, h = mount_h);
                 translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
             }
-            translate([(plate_size - mount_w_space) / 2 - 1, plate_size - 19.5, -0.5]) {
+            translate([(plate_size - mount_w_space) / 2 - 1, plate_size - 19.5, 0.1]) {
                 cylinder(d = mount_d, h = mount_h);
                 translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
             }
