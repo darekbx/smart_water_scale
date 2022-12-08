@@ -30,7 +30,7 @@ void setup() {
 
 void loop() {
   if (deviceConnected) {
-    float weight = scale.get_units(SCALE_TIMES_AVERAGE) / 1000.0;
+    float weight = scale.get_units(SCALE_TIMES_AVERAGE);
     
     if (weight > 0 && compare_floats(weight, prevWeight, COMPARE_DELTA) != 0) {
       // Notify with Blue that weight was changed

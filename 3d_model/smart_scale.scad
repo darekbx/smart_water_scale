@@ -1,4 +1,4 @@
-$fn = 45;
+$fn = $preview ? 20 : 90;
 
 plate_thickness = 3.5;
 hole_diameter = 2.9;
@@ -7,8 +7,13 @@ leg_diameter = 10.5;
 sensor_height = 34;
 sensor_width = 44 - 1.5; // 1.5 is a mount bolt
 
-
-top();
+intersection() {
+    top();
+    translate([5, 5, 3]) minkowski() {
+        cube([105, 105, 2]);
+        sphere(5);
+    }
+}
 
 //bottom();
 
@@ -16,47 +21,60 @@ top();
  * Top plate
  */
 module top() {
+    cut_outs = false;
     plate_size = 115;
-    mount_d = 3.1;
-    mount_s = 6.1;
+    mount_d = 3.3;
+    mount_s = 6.2;
     mount_h = 3;
    
+    module hole(isLeft) {
+        steps = [0.0 : 0.1 : 1.2];
+        for (i = steps) {
+            translate([0, i, 0]) {
+                cylinder(d = mount_d, h = mount_h * 3);
+                translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
+            }
+        }
+    }
+    
     difference() {
-        cube([plate_size, plate_size, 3]);
-
-        // side cut-outs
-        translate([-0.1, (plate_size - 30) / 2, -0.5]) cube([10, 30, 4]);
-        translate([plate_size - 10 + 0.1, (plate_size - 30) / 2, -0.5]) cube([10, 30, 4]);
-
-        translate([(plate_size - 70) / 2, -0.1, -0.5]) cube([70, 10, 4]);
-        translate([(plate_size - 70) / 2, plate_size - 10 + 0.1, -0.5]) cube([70, 10, 4]);
+        translate([0, 0, 0]) {
+            cube([plate_size, plate_size, 3]);
+            
+            // pillars
+            translate([0, 0, 3]) cube([15.5, 41.5, 3.1]);
+            translate([99.5, 0, 3]) cube([15.5, 41.5, 3.1]);
+            translate([0, 73.5, 3]) cube([15.5, 41.5, 3.1]);
+            translate([99.5, 73.5, 3]) cube([15.5, 41.5, 3.1]);
+        }
         
-        // center cut-out
-        translate([plate_size / 2, plate_size / 2, -0.5]) cylinder(d = 30, h = 4);
+        if (cut_outs) {
+            // side cut-outs
+            h_size = 32;
+            translate([-0.1, (plate_size - h_size) / 2, -0.5]) cube([10, h_size, 4]);
+            translate([plate_size - 10 + 0.1, (plate_size - h_size) / 2, -0.5]) cube([10, h_size, 4]);
+
+            w_size = 84;
+            translate([(plate_size - w_size) / 2, -0.1, -0.5]) cube([w_size, 10, 4]);
+            translate([(plate_size - w_size) / 2, plate_size - 10 + 0.1, -0.5]) cube([w_size, 10, 4]);
+            
+            // center cut-out
+            translate([plate_size / 2, plate_size / 2, -0.5]) cylinder(d = 34, h = 4);
+        }
+            
           
         // holes
         translate([0.5, 1, 0]) {
+            
             // mount h 75mm
             mount_h_space = 76;
-            translate([7, (plate_size - mount_h_space) / 2 - 1, 0.1]) {
-                cylinder(d = mount_d, h = mount_h);
-                translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
-            }
-            translate([plate_size - 7, (plate_size - mount_h_space) / 2 - 1, 0.1]) { 
-                cylinder(d = mount_d, h = mount_h); 
-                translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
-            }
+            translate([7, (plate_size - mount_h_space) / 2 - 1, 0.1]) hole(false);
+            translate([plate_size - 7, (plate_size - mount_h_space) / 2 - 1, 0.1]) hole(true);
             
             // mount w 100mm
             mount_w_space = 100;
-            translate([plate_size - 7, plate_size - 19.5, 0.1]) {
-                cylinder(d = mount_d, h = mount_h);
-                translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
-            }
-            translate([(plate_size - mount_w_space) / 2 - 1, plate_size - 19.5, 0.1]) {
-                cylinder(d = mount_d, h = mount_h);
-                translate([0, 0, -1]) cylinder(d = mount_s, h = mount_h);
-            }
+            translate([plate_size - 7, plate_size - 19.5, 0.1]) hole(true);
+            translate([(plate_size - mount_w_space) / 2 - 1, plate_size - 19.5, 0.1]) hole(false);
         }
     }
     
