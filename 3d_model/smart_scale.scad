@@ -1,4 +1,4 @@
-$fn = $preview ? 20 : 90;
+$fn = $preview ? 10 : 90;
 
 plate_thickness = 3.5;
 hole_diameter = 2.9;

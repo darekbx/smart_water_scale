@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notifiction_title">Water level</string>
+    <string name="notifiction_text">Today\'s consumption: %f</string>
+    <string name="notifiction_na">Not ready</string>
+</resources>
