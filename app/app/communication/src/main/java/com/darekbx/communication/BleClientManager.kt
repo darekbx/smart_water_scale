@@ -16,7 +16,8 @@ class BleClientManager(
     enum class DeviceStatus(val value: Int) {
         CONNECTING(0),
         CONNECTED(1),
-        FAILED(2)
+        DISCONNECTED(2),
+        FAILED(10)
     }
 
     var notifyStatus: (DeviceStatus) -> Unit = { }
@@ -49,12 +50,16 @@ class BleClientManager(
             notifyStatus(DeviceStatus.CONNECTING)
             beginAtomicRequestQueue()
                 .add(enableNotifications(characteristic)
-                    .fail { _: BluetoothDevice?, _: Int ->
+                    .fail { _: BluetoothDevice?, status: Int ->
+                        Log.v(TAG, "Notifications failed: $status")
                         notifyStatus(DeviceStatus.FAILED)
                         disconnect().enqueue()
                     }
                 )
-                .done { notifyStatus(DeviceStatus.CONNECTED) }
+                .done {
+                    Log.v(TAG, "Ble client connected")
+                    notifyStatus(DeviceStatus.CONNECTED)
+                }
                 .fail { _, code ->
                     Log.v(TAG, "Initialization failed: $code")
                     notifyStatus(DeviceStatus.FAILED)
@@ -64,6 +69,7 @@ class BleClientManager(
 
         override fun onServicesInvalidated() {
             characteristic = null
+            notifyStatus(DeviceStatus.DISCONNECTED)
         }
     }
 

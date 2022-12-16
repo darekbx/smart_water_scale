@@ -3,7 +3,7 @@ package com.darekbx.data.di
 import android.content.Context
 import androidx.room.Room
 import com.darekbx.data.WaterDatabase
-import com.darekbx.data.dao.LevelDao
+import com.darekbx.data.dao.WaterLevelDao
 import com.darekbx.data.dao.StatusDao
 import dagger.Module
 import dagger.Provides
@@ -21,7 +21,7 @@ class DataModule {
     }
 
     @Provides
-    fun provideLevelDao(database: WaterDatabase): LevelDao {
+    fun provideLevelDao(database: WaterDatabase): WaterLevelDao {
         return database.levelDao()
     }
 

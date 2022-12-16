@@ -11,7 +11,7 @@ class StatusRepository @Inject constructor(
     private val statusDao: StatusDao
 ) {
 
-    fun statusFlow() = statusDao.status()
+    fun status() = statusDao.status()
 
     fun updateStatus(deviceStatus: BleClientManager.DeviceStatus) {
         CoroutineScope(Dispatchers.IO).launch {

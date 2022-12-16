@@ -5,7 +5,6 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.IBinder
-import android.util.Log
 import com.darekbx.communication.utils.NotificationUtil
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -16,11 +15,11 @@ class BluetoothService : Service() {
     companion object {
         private var IS_SERVICE_ACTIVE = false
 
-        private val CONNECTION_ACTION_NAME = "ble_connection_action"
-        private val CONNECTION_VALUE_KEY = "ble_connection_value"
+        private const val CONNECTION_ACTION_NAME = "ble_connection_action"
+        private const val CONNECTION_VALUE_KEY = "ble_connection_value"
 
-        private val DATA_ACTION_NAME = "ble_data_action"
-        private val DATA_VALUE_KEY = "ble_data_value"
+        private const val DATA_ACTION_NAME = "ble_data_action"
+        private const val DATA_VALUE_KEY = "ble_data_value"
     }
 
     @Inject
@@ -45,6 +44,8 @@ class BluetoothService : Service() {
             ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
         )
 
+        notifyStatus(BleClientManager.DeviceStatus.CONNECTING)
+
         clientManager.notifyStatus = ::notifyStatus
         clientManager.notifyData = ::notifyData
 
@@ -60,16 +61,21 @@ class BluetoothService : Service() {
     override fun onDestroy() {
         super.onDestroy()
 
-        clientManager?.close()
+        clientManager.close()
         bleScanner.stopScanner()
 
         IS_SERVICE_ACTIVE = false
     }
 
     private fun notifyStatus(deviceStatus: BleClientManager.DeviceStatus) {
+        notificationUtil.updateNotification(0.0F)
         sendBroadcast(Intent(CONNECTION_ACTION_NAME).apply {
             putExtra(CONNECTION_VALUE_KEY, deviceStatus.value)
-            setComponent(ComponentName("com.darekbx.water", "com.darekbx.water.broadcasts.StatusBroadcast"))
+            component =
+                ComponentName(
+                    "com.darekbx.water",
+                    "com.darekbx.water.broadcasts.StatusBroadcast"
+                )
         })
     }
 
@@ -77,7 +83,11 @@ class BluetoothService : Service() {
         notificationUtil.updateNotification(data)
         sendBroadcast(Intent(DATA_ACTION_NAME).apply {
             putExtra(DATA_VALUE_KEY, data)
-            setComponent(ComponentName("com.darekbx.water", "com.darekbx.water.broadcasts.DataBroadcast"))
+            component =
+                ComponentName(
+                    "com.darekbx.water",
+                    "com.darekbx.water.broadcasts.DataBroadcast"
+                )
         })
     }
 }

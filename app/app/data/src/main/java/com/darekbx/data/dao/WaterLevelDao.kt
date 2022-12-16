@@ -3,15 +3,15 @@ package com.darekbx.data.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.darekbx.data.dto.LevelDto
+import com.darekbx.data.dto.WaterLevelDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface LevelDao {
+interface WaterLevelDao {
 
     @Query("SELECT * FROM level")
-    fun levels(): Flow<List<LevelDto>>
+    fun waterLevels(): Flow<List<WaterLevelDto>>
 
     @Insert
-    fun addLevel(levelDto: LevelDto)
+    fun addWaterLevel(waterLevelDto: WaterLevelDto)
 }

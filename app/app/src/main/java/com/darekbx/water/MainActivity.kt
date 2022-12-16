@@ -85,8 +85,8 @@ private fun MainScreen(
     waterLevelViewModel: WaterLevelViewModel = hiltViewModel()
 ) {
 
-    val status by waterLevelViewModel.status.observeAsState()
-    val data by waterLevelViewModel.levels.observeAsState()
+    val status by waterLevelViewModel.status().observeAsState()
+    val waterLevels by waterLevelViewModel.waterLevels().observeAsState()
 
     Column(Modifier.padding(16.dp)) {
 
@@ -99,6 +99,6 @@ private fun MainScreen(
         }
 
         Text(text = "Status: ${status?.value}")
-        Text(text = "Data: ${data?.size}")
+        Text(text = "Data: ${waterLevels?.size}")
     }
 }

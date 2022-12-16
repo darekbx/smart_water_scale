@@ -3,10 +3,8 @@ package com.darekbx.water.broadcasts
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import com.darekbx.communication.BleClientManager
 import com.darekbx.water.repository.local.StatusRepository
-import com.darekbx.water.ui.waterlevel.viewmodel.WaterLevelViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -14,8 +12,8 @@ import javax.inject.Inject
 class StatusBroadcast: BroadcastReceiver() {
 
     companion object {
-        private val CONNECTION_ACTION_NAME = "ble_connection_action"
-        private val CONNECTION_VALUE_KEY = "ble_connection_value"
+        private const val CONNECTION_ACTION_NAME = "ble_connection_action"
+        private const val CONNECTION_VALUE_KEY = "ble_connection_value"
     }
 
     @Inject
@@ -29,9 +27,8 @@ class StatusBroadcast: BroadcastReceiver() {
             )
             val status = BleClientManager.DeviceStatus.values()
                 .firstOrNull { it.value == statusInt }
-                ?: throw java.lang.IllegalStateException("Invalid ble device status!")
+                ?: throw IllegalStateException("Invalid ble device status!")
             statusRepository.updateStatus(status)
-            Log.v("--------", "status: $status" )
         }
     }
 }
